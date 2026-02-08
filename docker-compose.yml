@@ -1,13 +1,13 @@
 services:
   db:
-    container_name: postgres
+    container_name: ecommerce-db
     image: postgres
     environment:
       POSTGRES_USER: user
       POSTGRES_PASSWORD: password
-      PGDATA: /data/postgres
+      PGDATA: /data/ecommerce-db
     volumes:
-      - db:/data/postgres
+      - db:/data/ecommerce-db
     ports:
       - "5332:5432"
     networks:
