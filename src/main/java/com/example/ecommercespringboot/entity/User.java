@@ -21,7 +21,7 @@ public class User {
     @Column(nullable = false, length = 50)
     private String username;
 
-    @Column(nullable = false, length = 50)
+    @Column(nullable = false, length = 65)
     private String password;
 
     @Column(nullable = false, length = 50)
@@ -99,7 +99,7 @@ public class User {
         return "User{" +
                 "id=" + id +
                 ", username='" + username + '\'' +
-                ", password='" + password + '\'' +
+//                ", password='" + password + '\'' +
                 ", email='" + email + '\'' +
                 ", first_name='" + first_name + '\'' +
                 ", last_name='" + last_name + '\'' +
