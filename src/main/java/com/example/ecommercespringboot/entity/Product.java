@@ -33,8 +33,7 @@ public class Product {
     public Product() {
     }
 
-    public Product(Long id, String name, String description, BigDecimal price, Integer stock_quantity) {
-        this.id = id;
+    public Product( String name, String description, BigDecimal price, Integer stock_quantity) {
         this.name = name;
         this.description = description;
         this.price = price;
@@ -73,7 +72,7 @@ public class Product {
         this.price = price;
     }
 
-    public Integer getStock_quantity() {
+    public Integer getStockQuantity() {
         return stock_quantity;
     }
 
