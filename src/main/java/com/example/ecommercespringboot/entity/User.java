@@ -5,6 +5,11 @@ import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
 @Entity
 @Table(
         name = "users",
@@ -16,7 +21,7 @@ import jakarta.validation.constraints.Size;
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    private Integer id;
+    private Long id;
 
     @Column(nullable = false, length = 50)
     private String username;
@@ -34,7 +39,23 @@ public class User {
     private String last_name;
 
 
-    public User(Integer id, String username, String password, String email, String first_name, String last_name) {
+    @ManyToMany(fetch = FetchType.EAGER)
+    @JoinTable(
+            name = "user_roles",
+            joinColumns = @JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "role_id")
+    )
+    private Set<Role> roles = new HashSet<>();
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Order> orders = new ArrayList<>();
+
+
+
+    public User() {
+    }
+
+    public User(Long id, String username, String password, String email, String first_name, String last_name) {
         this.id = id;
         this.username = username;
         this.password = password;
@@ -43,14 +64,11 @@ public class User {
         this.last_name = last_name;
     }
 
-    public User() {
-    }
-
-    public Integer getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(Integer id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
@@ -92,6 +110,22 @@ public class User {
 
     public void setLast_name(String last_name) {
         this.last_name = last_name;
+    }
+
+    public Set<Role> getRoles() {
+        return roles;
+    }
+
+    public void setRoles(Set<Role> roles) {
+        this.roles = roles;
+    }
+
+    public List<Order> getOrders() {
+        return orders;
+    }
+
+    public void setOrders(List<Order> orders) {
+        this.orders = orders;
     }
 
     @Override
