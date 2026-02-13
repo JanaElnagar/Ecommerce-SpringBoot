@@ -9,6 +9,9 @@ import com.example.ecommercespringboot.repository.ProductRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 @Service
 public class ProductService {
 
@@ -27,6 +30,12 @@ public class ProductService {
 
     public ProductResponseDto getProduct(Long id){
         return productMapper.toDto(productRepo.findById(id).orElseThrow(() -> new ResourceNotFoundException("Product Not Found")));
+    }
+
+    public List<ProductResponseDto> getAllProducts(){
+        return productRepo.findAll().stream()
+                .map(productMapper::toDto)
+                .collect(Collectors.toList());
     }
 
     public ProductResponseDto updateProduct(Long id, ProductCreateDto dto){

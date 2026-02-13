@@ -1,7 +1,11 @@
 package com.example.ecommercespringboot.dto;
 
+import com.example.ecommercespringboot.entity.Role;
 import jakarta.persistence.Column;
 import jakarta.validation.constraints.*;
+
+import java.util.HashSet;
+import java.util.Set;
 
 public class UserDto {
 
@@ -23,6 +27,8 @@ public class UserDto {
     private String first_name;
 
     private String last_name;
+
+    private Set<RoleDto> roles;
 
     public String getUsername() {
         return username;
@@ -63,4 +69,27 @@ public class UserDto {
     public void setLast_name(String last_name) {
         this.last_name = last_name;
     }
+
+    public Set<RoleDto> getRoles() {
+        return roles;
+    }
+
+    public void setRoles(Set<RoleDto> roles) {
+        this.roles = roles;
+    }
 }
+
+/**
+ * {
+ *     "first_name": "John",
+ *     "last_name": "Doe",
+ *     "username": "john_doe",
+ *     "password": "password123",
+ *     "email": "john.doe@example.com",
+ *     "roles": [
+ *         {
+ *             "RoleName": "ADMIN"
+ *         }
+ *     ]
+ * }
+ */
