@@ -15,17 +15,13 @@ public class OrderCreateDto {
     @NotBlank
     private LocalDateTime order_date;
 
-    @NotBlank
-    private OrderStatus status;
+    private String status;
 
     @NotBlank
     private BigDecimal total_amount;
 
     @NotBlank
-    private User user;
-
-    @NotBlank
-    private List<OrderItem> orderItems = new ArrayList<>();
+    private List<OrderItemDto> orderItems = new ArrayList<>();
 
     public LocalDateTime getOrder_date() {
         return order_date;
@@ -35,11 +31,11 @@ public class OrderCreateDto {
         this.order_date = order_date;
     }
 
-    public OrderStatus getStatus() {
+    public String getStatus() {
         return status;
     }
 
-    public void setStatus(OrderStatus status) {
+    public void setStatus(String status) {
         this.status = status;
     }
 
@@ -51,19 +47,11 @@ public class OrderCreateDto {
         this.total_amount = total_amount;
     }
 
-    public User getUser() {
-        return user;
-    }
-
-    public void setUser(User user) {
-        this.user = user;
-    }
-
-    public List<OrderItem> getOrderItems() {
+    public List<OrderItemDto> getOrderItems() {
         return orderItems;
     }
 
-    public void setOrderItems(List<OrderItem> orderItems) {
+    public void setOrderItems(List<OrderItemDto> orderItems) {
         this.orderItems = orderItems;
     }
 }

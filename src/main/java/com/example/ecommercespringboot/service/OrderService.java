@@ -1,13 +1,13 @@
 package com.example.ecommercespringboot.service;
 
 import com.example.ecommercespringboot.dto.OrderCreateDto;
+import com.example.ecommercespringboot.dto.OrderItemDto;
 import com.example.ecommercespringboot.dto.OrderResponseDto;
-import com.example.ecommercespringboot.entity.Order;
-import com.example.ecommercespringboot.entity.OrderItem;
-import com.example.ecommercespringboot.entity.User;
+import com.example.ecommercespringboot.entity.*;
 import com.example.ecommercespringboot.exception.ResourceNotFoundException;
 import com.example.ecommercespringboot.mapper.OrderMapper;
 import com.example.ecommercespringboot.repository.OrderRepository;
+import com.example.ecommercespringboot.repository.ProductRepository;
 import com.example.ecommercespringboot.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.AccessDeniedException;
@@ -15,6 +15,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -23,6 +24,9 @@ public class OrderService {
 
 	@Autowired
 	private OrderRepository orderRepository;
+
+	@Autowired
+	private ProductRepository productRepository;
 
 	@Autowired
 	private OrderMapper orderMapper;
@@ -39,7 +43,10 @@ public class OrderService {
 			throw new ResourceNotFoundException("User not found");
 		}
 
-		Order order = orderMapper.toEntity(dto);
+		Order order = orderMapper.toEntity(dto); // todo handle exception
+
+		order.setOrderItems(OrderItemsDtoToEntity(dto.getOrderItems(),order));
+
 		order.setUser(user);
 		orderRepository.save(order);
 		return orderMapper.toDto(order);
@@ -80,17 +87,10 @@ public class OrderService {
 		}
 
 		order.setOrder_date(dto.getOrder_date());
-		order.setStatus(dto.getStatus());
+		order.setStatus(OrderStatus.valueOf(dto.getStatus()));  // todo validate
 		order.setTotal_amount(dto.getTotal_amount());
 
-		List<OrderItem> newItems = dto.getOrderItems();
-		order.getOrderItems().clear();
-		if (newItems != null) {
-			for (OrderItem item : newItems) {
-				item.setOrder(order);
-			}
-			order.setOrderItems(newItems);
-		}
+		order.setOrderItems(OrderItemsDtoToEntity(dto.getOrderItems(),order));
 
 		orderRepository.save(order);
 		return orderMapper.toDto(order);
@@ -116,5 +116,23 @@ public class OrderService {
 
 		String username = authentication.getName();
 		return order.getUser().getUsername().equals(username);
+	}
+
+	private List<OrderItem> OrderItemsDtoToEntity(List<OrderItemDto> itemDtos, Order order){
+		List<OrderItem> orderItems = new ArrayList<>();
+		if (itemDtos != null) {
+			for (OrderItemDto itemDto : itemDtos) {
+				Product product = productRepository.findById(itemDto.getProductId())
+						.orElseThrow(() -> new ResourceNotFoundException("Product not found"));
+
+				OrderItem orderItem = new OrderItem();
+				orderItem.setProduct(product);
+				orderItem.setQuantity(itemDto.getQuantity());
+				orderItem.setPrice_at_purchase(itemDto.getPrice());  // Note: price_at_purchase not price
+				orderItem.setOrder(order);
+				orderItems.add(orderItem);
+			}
+		}
+		return orderItems;
 	}
 }

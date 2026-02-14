@@ -48,7 +48,7 @@ public class UserService implements UserDetailsService {
     }
 
     private Role getOrCreateRole(RoleDto roleDto) {
-        return rolesRepository.findByName(roleDto.getName().name()).orElseGet(() -> {
+        return rolesRepository.findByName(roleDto.getName()).orElseGet(() -> {
             Role role = new Role();
             role.setName(roleDto.getName());
             return rolesRepository.save(role);
