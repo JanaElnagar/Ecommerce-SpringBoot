@@ -66,17 +66,3 @@ public class UserService implements UserDetailsService {
         return new MyUserDetails(user);
     }
 }
-/**
- * {
- *     "first_name": "John",
- *     "last_name": "Doe",
- *     "username": "john_doe",
- *     "password": "password123",
- *     "email": "john.doe@example.com",
- *     "roles": [
- *         {
- *             "RoleName": "ADMIN"
- *         }
- *     ]
- * }
- */

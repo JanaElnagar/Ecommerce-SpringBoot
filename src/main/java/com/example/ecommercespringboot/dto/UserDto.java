@@ -78,18 +78,3 @@ public class UserDto {
         this.roles = roles;
     }
 }
-
-/**
- * {
- *     "first_name": "John",
- *     "last_name": "Doe",
- *     "username": "john_doe",
- *     "password": "password123",
- *     "email": "john.doe@example.com",
- *     "roles": [
- *         {
- *             "RoleName": "ADMIN"
- *         }
- *     ]
- * }
- */
