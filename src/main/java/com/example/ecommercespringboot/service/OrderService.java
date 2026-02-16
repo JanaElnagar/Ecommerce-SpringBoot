@@ -15,6 +15,8 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -43,9 +45,11 @@ public class OrderService {
 			throw new ResourceNotFoundException("User not found");
 		}
 
-		Order order = orderMapper.toEntity(dto); // todo handle exception
+		Order order = orderMapper.toEntity(dto);
 
-		order.setOrderItems(OrderItemsDtoToEntity(dto.getOrderItems(),order));
+		List<OrderItem> orderItems = OrderItemsDtoToEntity(dto.getOrderItems(),order);
+		order.setOrderItems(orderItems);
+		order.setTotal_amount(getTotalAmount(orderItems));
 
 		order.setUser(user);
 		orderRepository.save(order);
@@ -86,11 +90,15 @@ public class OrderService {
 			throw new AccessDeniedException("You don't have permission to update this order");
 		}
 
-		order.setOrder_date(dto.getOrder_date());
-		order.setStatus(OrderStatus.valueOf(dto.getStatus()));  // todo validate
-		order.setTotal_amount(dto.getTotal_amount());
-
-		order.setOrderItems(OrderItemsDtoToEntity(dto.getOrderItems(),order));
+		if (isAdmin(authentication)) {
+			// Admin can change status (PENDING → SHIPPED)
+			if (dto.getStatus() != null) {
+				order.setStatus(OrderStatus.valueOf(dto.getStatus()));
+			}
+		}
+		List<OrderItem> orderItems = OrderItemsDtoToEntity(dto.getOrderItems(),order);
+		order.setOrderItems(orderItems);
+		order.setTotal_amount(getTotalAmount(orderItems));
 
 		orderRepository.save(order);
 		return orderMapper.toDto(order);
@@ -125,14 +133,27 @@ public class OrderService {
 				Product product = productRepository.findById(itemDto.getProductId())
 						.orElseThrow(() -> new ResourceNotFoundException("Product not found"));
 
+				BigDecimal itemPrice = product.getPrice();
+				BigDecimal itemTotal = itemPrice.multiply(BigDecimal.valueOf(itemDto.getQuantity()));
+
 				OrderItem orderItem = new OrderItem();
 				orderItem.setProduct(product);
 				orderItem.setQuantity(itemDto.getQuantity());
-				orderItem.setPrice_at_purchase(itemDto.getPrice());  // Note: price_at_purchase not price
+				orderItem.setPrice_at_purchase(product.getPrice());
 				orderItem.setOrder(order);
 				orderItems.add(orderItem);
 			}
 		}
 		return orderItems;
+	}
+
+	private BigDecimal getTotalAmount(List<OrderItem> orderItems){
+		BigDecimal totalAmount = BigDecimal.ZERO;
+		if (orderItems != null){
+			for (OrderItem item : orderItems){
+				totalAmount = totalAmount.add(item.getPrice_at_purchase());
+			}
+		}
+		return totalAmount;
 	}
 }

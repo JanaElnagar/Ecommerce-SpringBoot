@@ -7,6 +7,7 @@ import com.example.ecommercespringboot.entity.OrderItem;
 import com.example.ecommercespringboot.entity.OrderStatus;
 import org.springframework.stereotype.Component;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Component
@@ -15,9 +16,8 @@ public class OrderMapper {
     public Order toEntity(OrderCreateDto dto){
         try {
             Order order = new Order();
-            order.setOrder_date(dto.getOrder_date());
-            order.setStatus(OrderStatus.valueOf(dto.getStatus()));
-            order.setTotal_amount(dto.getTotal_amount());
+            order.setOrder_date(LocalDateTime.now());
+            order.setStatus(OrderStatus.PENDING);
 
 //            List<OrderItem> items = dto.getOrderItems();
 //            if (items != null) {
