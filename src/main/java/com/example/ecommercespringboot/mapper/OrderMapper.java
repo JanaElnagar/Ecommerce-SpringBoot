@@ -13,27 +13,8 @@ import java.util.List;
 @Component
 public class OrderMapper {
 
-    public Order toEntity(OrderCreateDto dto){
-        try {
-            Order order = new Order();
-            order.setOrder_date(LocalDateTime.now());
-            order.setStatus(OrderStatus.PENDING);
-
-//            List<OrderItem> items = dto.getOrderItems();
-//            if (items != null) {
-//                for (OrderItem item : items) {
-//                    item.setOrder(order);
-//                }
-//                order.setOrderItems(items);
-//            }
-            return order;
-        } catch (Exception e) {
-            throw new RuntimeException(e);  // todo return suitable error
-        }
-    }
-
     public OrderResponseDto toDto(Order order){
         if (order == null) return null;
-        return new OrderResponseDto(order.getId(), order.getOrder_date(), order.getStatus(), order.getTotal_amount());
+        return new OrderResponseDto(order.getId(), order.getOrder_date(), order.getStatus(), order.getTotal_amount(), order.getUser().getId(), order.getUser().getUsername());
     }
 }
